@@ -1,5 +1,14 @@
 # Mango
 
+<p>
+  <img width="260px" src="https://raw.githubusercontent.com/mangopkg/Assets/main/mango.png">
+</p>
+<p>
+	<img alt="gopher" src="https://img.shields.io/github/go-mod/go-version/mangopkg/mango?style=for-the-badge&logo=appveyor"/>
+	<img alt="gopher" src="https://img.shields.io/github/license/mangopkg/mango?style=for-the-badge"/>
+</p>
+
+
 An easy-to-use REST API framework built on top of Go-Chi.
 
 ### Get Started
