@@ -19,7 +19,6 @@ type RInfo struct {
 	Auth    string   `json:"auth"`
 	Roles   []string `json:"roles"`
 	ReqBody string   `json:"reqBody"`
-	Handle  func(http.ResponseWriter, *http.Request)
 }
 
 type Response struct {
