@@ -181,8 +181,7 @@ func (u *Service) hostDocs(data []byte, r *chi.Mux) {
 		log.Fatal(aerr)
 	}
 
-	root := "./dist/swagger-ui"
-
+	root := "./dist"
 	fs := http.FileServer(http.Dir(root))
 
 	r.Get("/*", func(w http.ResponseWriter, r *http.Request) {
