@@ -185,7 +185,7 @@ func (u *Service) hostDocs(data []byte, r *chi.Mux) {
 
 	fs := http.FileServer(http.Dir(root))
 
-	r.Get("/api", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/*", func(w http.ResponseWriter, r *http.Request) {
 		if _, err := os.Stat(root + r.RequestURI); os.IsNotExist(err) {
 			http.StripPrefix(r.RequestURI, fs).ServeHTTP(w, r)
 		} else {
