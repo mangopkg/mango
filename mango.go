@@ -1,12 +1,12 @@
 package mango
 
 import (
+	"embed"
 	"encoding/json"
 	"go/parser"
 	"go/token"
 	"log"
 	"net/http"
-	"os"
 	"reflect"
 	"regexp"
 
@@ -172,27 +172,25 @@ func (u *Service) GenerateDocs() {
 	u.hostDocs(b, u.R)
 }
 
+//go:embed all:dist
+var distFS embed.FS
+
 func (u *Service) hostDocs(data []byte, r *chi.Mux) {
 
 	var swagger spec.Swagger
 
-	aerr := json.Unmarshal(data, &swagger)
-	if aerr != nil {
-		log.Fatal(aerr)
+	err := json.Unmarshal(data, &swagger)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	root := "./dist"
-	fs := http.FileServer(http.Dir(root))
+	fs := http.FileServer(http.FS(distFS))
 
-	r.Get("/*", func(w http.ResponseWriter, r *http.Request) {
-		if _, err := os.Stat(root + r.RequestURI); os.IsNotExist(err) {
-			http.StripPrefix(r.RequestURI, fs).ServeHTTP(w, r)
-		} else {
-			fs.ServeHTTP(w, r)
-		}
+	r.HandleFunc("/*", func(w http.ResponseWriter, r *http.Request) {
+		http.StripPrefix("/", fs).ServeHTTP(w, r)
 	})
 
-	r.HandleFunc("/swagger.json", func(w http.ResponseWriter, req *http.Request) {
+	r.HandleFunc("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(swagger)
 	})
