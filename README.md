@@ -1,3 +1,5 @@
+**Warning: Until stable release, this framework is susceptible to breaking changes**
+
 # Mango
 
 <p>
@@ -11,7 +13,11 @@
 
 An easy-to-use REST API framework built on top of Go-Chi.
 
-### Get Started
+*New: Auto doc generation using openAPI specs and swagger-ui is now supported*
+
+You can view docs on http://localhost:3000/api/dist
+
+## Get Started
 Getting started is easy with the handy cli tool. Make sure that you have go already installed.
 ```go
 go install github.com/mangopkg/mng@v0.1.1
@@ -41,7 +47,7 @@ Open http://localhost:3000/book/find to see your api in action.
 
 You can now modify the code.
 
-### Adding new routes
+## Adding new routes
 New routes to your api can be easily added using the `mng` cli tool. Open the terminal in projects root and type
 ```go
 mng add user
@@ -93,19 +99,21 @@ More or less, we define a json object inside `@route{}` which is based on the st
 
 ```go
 type RInfo struct {
-	Pattern string   `json:"pattern"`
-	Func    string   `json:"func"`
-	Method  string   `json:"method"`
-	Auth    string   `json:"auth"`
-	Roles   []string `json:"roles"`
-	ReqBody string   `json:"reqBody"`
+	Pattern string                                   `json:"pattern"`
+	Func    string                                   `json:"func"`
+	Method  string                                   `json:"method"`
+	Auth    string                                   `json:"auth"`
+	ReqBody string                                   `json:"reqBody"`
+	Info    interface{}                              `json:"Info"`
+	MountAt string                                   `json:"mountAt"`
+	Handler func(http.ResponseWriter, *http.Request) `json:"handler"`
 }
 ```
 
-***Note: This is subjected to be updated in future but will retain all the current properties***
+***Note: This is subjected to breaking updates until stable release***
 
 
-### Response
+## Response
 Mango has an easy to use response utitlity that can come in handy.
 
 ```go
@@ -132,7 +140,48 @@ func (h *BookHandler) Find() func(w http.ResponseWriter, r *http.Request) {
 ```
 
 
-### Using Go-Chi
+## API Documentation
+
+Api documentation is now supported in mango, The framework will auto doc your routes but you have to add info manually for more verbose docs. Future updates will try to auto document more aspects of your API.
+
+**Warning: Currently, You must run your app on port 3000 on localhost for auto documentation support, This behaviour will be changed in a future release**
+
+#### Specifying specs manually
+
+Since auto doc is currently available in limited capacity, you can manually specify info for your routes.
+Example code:
+```go
+/*
+<@route{
+"pattern": "/find",
+"func": "Find",
+"method": "GET",
+
+	"info": {
+				"get": {
+					"description": "Returns all books from the system that the user has access to",
+					"responses": {
+					"200": {
+						"description": "A list of books."
+					}
+					}
+				}
+			}
+	}>
+*/
+func (h *BookHandler) Find() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.Response.Message = "Successful"
+		h.Response.StatusCode = 200
+		h.Response.Data = "123"
+		h.Response.Send(w)
+	}
+}
+```
+
+This strictly follows specs from https://github.com/go-openapi/spec Read their documetation for further information.
+
+## Using Go-Chi
 This framework is currently built on top of Go-Chi framework, You can read their documentation at https://github.com/go-chi/chi
 
 **This framework uses chi**
