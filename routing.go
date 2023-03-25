@@ -6,8 +6,10 @@ import (
 	"go/token"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
 	"regexp"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-openapi/spec"
@@ -17,7 +19,16 @@ import (
 func (u *Service) createRoutes(p string) {
 	fset := token.NewFileSet()
 
-	d, err := parser.ParseDir(fset, "."+p, nil, parser.ParseComments)
+	dir, err := os.Getwd()
+
+	c := strings.ReplaceAll(dir, "\\", "/")
+
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	d, err := parser.ParseDir(fset, c+p, nil, parser.ParseComments)
+
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -25,8 +36,8 @@ func (u *Service) createRoutes(p string) {
 	for _, f := range d {
 		for _, f := range f.Files {
 			for _, c := range f.Comments {
-				left := "<@route"
-				right := ">"
+				left := "</route"
+				right := "/route>"
 				rx := regexp.MustCompile(`(?s)` + regexp.QuoteMeta(left) + `(.*?)` + regexp.QuoteMeta(right))
 				matches := rx.FindAllStringSubmatch(c.Text(), -1)
 				for _, v := range matches {
