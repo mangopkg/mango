@@ -20,7 +20,7 @@ You can view docs on http://localhost:3000/api/dist
 ## Get Started
 Getting started is easy with the handy cli tool. Make sure that you have go already installed.
 ```go
-go install github.com/mangopkg/mng@v0.1.1
+go install github.com/mangopkg/mng@latest
 ```
 After installing the cli tool, Open a terminal in the directory where you would like to set up the project. Once the terminal is open perform
 ```go
